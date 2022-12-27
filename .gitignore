@@ -1,0 +1,32 @@
+This application serves as the backend for a platform that allows clients and admins to communicate and collaborate on support issues. 
+It provides a set of APIs that can be used to create and manage user accounts, create and resolve support tickets, and more.
+
+The platform has two types of users: clients and admins. Clients are individuals who use the platform to seek support for their issues, 
+while admins are individuals who are responsible for providing support to clients. 
+Admins can be created using the sign up API by passing a flag indicating that they are an admin.
+
+We first use a user controller with the following methods:
+whoAmI: This method handles a GET request to the /auth/whoami route and is guarded by the AuthGuard middleware. It returns the currently authenticated user, 
+which is retrieved from the @CurrentUser decorator.
+signOut: This method handles a POST request to the /auth/signout route and ends the current user's session by setting the userId property in the session object to null.
+createUser: This method handles a POST request to the /auth/signup route and creates a new user with the provided email and password. 
+It stores the new user's ID in the session object.
+signin: This method handles a POST request to the /auth/signin route and signs the user in with the provided email and password. 
+It stores the user's ID in the session object.
+findUser: This method handles a GET request to the /auth/:id route and retrieves a user with the specified ID. 
+If the user is not found, it throws a NotFoundException.
+findAllUsers: This method handles a GET request to the /auth route and retrieves a list of users, 
+optionally filtered by email if the email query parameter is provided.
+removeUser: This method handles a DELETE request to the /auth/:id route and removes the user with the specified ID.
+updateUser: This method handles a PATCH request to the /auth/:id route and updates the user with the specified ID with the provided data.
+This controller is also decorated with the @Serialize decorator, which will serialize the returned data using the UserDto data transfer object.
+
+Then we use a complaint controller with the follow methods:
+POST /complaint: This route allows a user to create a new complaint by sending a POST request with a CreateComplaintDto object in the request body. 
+The request must be authenticated using the AuthGuard. The created complaint is returned in the response, serialized as a Complaint object using the Serialize interceptor.
+GET /complaint: This route allows a user to retrieve a list of all complaints by sending a GET request. The returned list is an array of Complaint objects.
+PUT /complaint/:id: This route allows a user to update the status of a complaint by sending a PUT request with the ID of the complaint in the route parameter and 
+the updated status in the request body. The updated complaint is returned in the response.
+GET /complaint: This route allows a user to retrieve a list of complaints based on their status by sending a GET request with a status query parameter. 
+If no status query parameter is provided, the route returns a list of all complaints. The returned list is grouped by client type (VIP or non-VIP) and 
+sorted by creation date.
